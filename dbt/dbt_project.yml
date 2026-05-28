@@ -1,0 +1,36 @@
+name: 'lakehouse_dw'
+version: '1.0.0'
+config-version: 2
+
+profile: 'lakehouse_dw'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  lakehouse_dw:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: ephemeral
+    marts:
+      +materialized: table
+      +schema: warehouse
+      dim_customers:
+        +post-hook: "GRANT SELECT ON {{ this }} TO GROUP analytics_readers"
+      fact_orders:
+        +post-hook: "GRANT SELECT ON {{ this }} TO GROUP analytics_readers"
+
+vars:
+  start_date: '2022-01-01'
+  current_env: "{{ env_var('PIPELINE_ENV', 'dev') }}"
