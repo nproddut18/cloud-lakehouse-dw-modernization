@@ -1,0 +1,38 @@
+lakehouse_dw:
+  target: "{{ env_var('PIPELINE_ENV', 'dev') }}"
+  outputs:
+    dev:
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST') }}"
+      port: 5439
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      password: "{{ env_var('REDSHIFT_PASSWORD') }}"
+      dbname: lakehouse
+      schema: warehouse_dev
+      threads: 4
+      ra3_node: true
+      connect_timeout: 30
+
+    prod:
+      type: redshift
+      host: "{{ env_var('REDSHIFT_HOST') }}"
+      port: 5439
+      user: "{{ env_var('REDSHIFT_USER') }}"
+      password: "{{ env_var('REDSHIFT_PASSWORD') }}"
+      dbname: lakehouse
+      schema: warehouse
+      threads: 8
+      ra3_node: true
+      connect_timeout: 30
+
+    snowflake_prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: DATA_ENGINEER
+      database: LAKEHOUSE_DB
+      warehouse: COMPUTE_WH
+      schema: ANALYTICS
+      threads: 8
+      client_session_keep_alive: false
